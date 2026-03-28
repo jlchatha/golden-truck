@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Golden Era Truck Search</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0c0a08; --surface: #161310; --surface2: #1e1a15; --border: #2a2420;
+  --text: #f5f2ef; --text-dim: #d4cec6; --text-muted: #9a948e;
+  --amber: #f59e0b; --amber-bright: #fbbf24; --amber-dim: #f59e0b20;
+  --green: #22c55e; --green-dim: #22c55e20;
+  --blue: #3b82f6; --blue-dim: #3b82f620;
+  --cyan: #22d3ee; --cyan-dim: #22d3ee20;
+  --red: #ef4444; --red-dim: #ef444420;
+  --white: #ffffff;
+  --font-display: 'Syne', sans-serif; --font-body: 'Source Sans 3', sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--bg);color:var(--text);font-size:15px;line-height:1.6;overflow-x:hidden}
+.container{max-width:1100px;margin:0 auto;padding:0 16px;position:relative;z-index:1}
+
+.hero{padding:40px 0 24px;text-align:center;border-bottom:1px solid var(--border)}
+.hero h1{font-family:var(--font-display);font-size:clamp(24px,5vw,40px);font-weight:800;color:var(--white);letter-spacing:-1px}
+.hero h1 span{color:var(--amber)}
+.hero p{font-size:14px;color:var(--text-dim);margin-top:8px}
+.hero .updated{font-size:11px;color:var(--text-muted);margin-top:4px}
+
+.filters{display:flex;gap:8px;padding:16px 0;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.filter-btn{padding:6px 16px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--text-dim);font-family:var(--font-display);font-size:12px;font-weight:600;cursor:pointer;letter-spacing:0.5px}
+.filter-btn.active{background:var(--amber);color:var(--bg);border-color:var(--amber)}
+.filter-btn:hover{border-color:var(--amber)}
+
+.stats-bar{display:flex;gap:24px;padding:12px 0;font-size:12px;color:var(--text-muted);flex-wrap:wrap}
+.stats-bar span{color:var(--amber);font-weight:600}
+
+.truck-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;margin:12px 0;position:relative}
+.truck-card.priority-a{border-left:3px solid var(--green)}
+.truck-card.priority-b{border-left:3px solid var(--amber)}
+.truck-card.priority-c{border-left:3px solid var(--text-muted)}
+.truck-card.dead{border-left:3px solid var(--red);opacity:0.5}
+.truck-card.verifying{border-left:3px solid var(--cyan)}
+
+.truck-header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.truck-title{font-family:var(--font-display);font-size:18px;font-weight:700;color:var(--white)}
+.truck-price{font-family:var(--font-display);font-size:22px;font-weight:800;color:var(--amber-bright)}
+
+.truck-tags{display:flex;gap:6px;margin:8px 0;flex-wrap:wrap}
+.tag{font-size:10px;padding:2px 8px;border-radius:3px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px}
+.tag-tier1{background:#22c55e22;color:var(--green);border:1px solid #22c55e44}
+.tag-tier2{background:#3b82f622;color:var(--blue);border:1px solid #3b82f644}
+.tag-tier3{background:#f59e0b22;color:var(--amber);border:1px solid #f59e0b44}
+.tag-verified{background:var(--green-dim);color:var(--green);border:1px solid #22c55e44}
+.tag-unverified{background:var(--amber-dim);color:var(--amber);border:1px solid #f59e0b44}
+.tag-fail{background:var(--red-dim);color:var(--red);border:1px solid #ef444444}
+.tag-dead{background:#44444422;color:#888;border:1px solid #44444444}
+.tag-checking{background:var(--cyan-dim);color:var(--cyan);border:1px solid #22d3ee44}
+.tag-sunbelt{background:#22c55e11;color:#6ee7b7;border:1px solid #22c55e33}
+
+.truck-details{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin:12px 0}
+.detail{font-size:13px}
+.detail-label{color:var(--text-muted);font-size:11px;text-transform:uppercase;letter-spacing:0.5px}
+.detail-value{color:var(--white);font-weight:500}
+.detail-value.good{color:var(--green)}.detail-value.warn{color:var(--amber)}.detail-value.bad{color:var(--red)}
+
+.truck-notes{font-size:13px;color:var(--text-dim);margin:8px 0;padding:8px 12px;background:var(--surface2);border-radius:4px}
+.truck-notes strong{color:var(--white)}
+
+.truck-verification{font-size:12px;color:var(--cyan);margin-top:8px;padding:8px 12px;background:var(--cyan-dim);border-radius:4px;border:1px solid #22d3ee33}
+
+.truck-links{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.truck-link{font-size:12px;color:var(--amber);text-decoration:none;padding:4px 10px;border:1px solid var(--amber);border-radius:4px}
+.truck-link:hover{background:var(--amber);color:var(--bg)}
+
+.section-label{font-family:var(--font-display);font-size:13px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:3px;margin:24px 0 8px;padding-top:16px;border-top:1px solid var(--border)}
+
+.allin{font-size:12px;color:var(--text-dim);margin-top:6px}
+.allin span{color:var(--amber-bright);font-weight:600}
+
+.footer{text-align:center;padding:32px 0;font-size:11px;color:var(--text-muted);letter-spacing:2px;text-transform:uppercase;border-top:1px solid var(--border);margin-top:24px}
+
+@media(max-width:600px){
+  .truck-details{grid-template-columns:1fr 1fr}
+  .truck-header{flex-direction:column}
+  .hero{padding:24px 0 16px}
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="hero">
+  <h1>Golden Era <span>Truck Search</span></h1>
+  <p>2003-2006 Silverado/Sierra &bull; 2007-2011 Tundra &bull; 2011-2014 F-150 Coyote</p>
+  <div class="updated">Last updated: <span id="timestamp">March 28, 2026 — Initial search, verification in progress</span></div>
+</div>
+
+<div class="stats-bar">
+  <div>Total leads: <span>29</span></div>
+  <div>Verified: <span id="verifiedCount">0</span></div>
+  <div>Priority A: <span>5</span></div>
+  <div>Budget: <span>$15K all-in</span></div>
+</div>
+
+<div class="filters">
+  <button class="filter-btn active" onclick="filterTrucks('all')">All</button>
+  <button class="filter-btn" onclick="filterTrucks('tier1')">GM Golden Era</button>
+  <button class="filter-btn" onclick="filterTrucks('tier2')">Toyota Tundra</button>
+  <button class="filter-btn" onclick="filterTrucks('tier3')">Ford Coyote</button>
+  <button class="filter-btn" onclick="filterTrucks('priority-a')">Priority A</button>
+</div>
+
+<!-- TIER 1: GM GOLDEN ERA -->
+<div class="section-label">Tier 1 — GM Golden Era (Primary Target)</div>
+
+<div class="truck-card priority-a tier1" data-tier="tier1" data-priority="priority-a" id="gm1">
+  <div class="truck-header">
+    <div class="truck-title">GM-1: 2005 Silverado 1500 Z71 Crew Cab 4WD</div>
+    <div class="truck-price">$6,925</div>
+  </div>
+  <div class="truck-tags">
+    <span class="tag tag-tier1">GM Golden Era</span>
+    <span class="tag tag-verified">VIN Confirmed</span>
+    <span class="tag tag-sunbelt">Sun Belt</span>
+    <span class="tag tag-checking">Verifying...</span>
+  </div>
+  <div class="truck-details">
+    <div class="detail"><div class="detail-label">Engine</div><div class="detail-value good">5.3L V8 Vortec ✓</div></div>
+    <div class="detail"><div class="detail-label">Drivetrain</div><div class="detail-value good">4WD ✓</div></div>
+    <div class="detail"><div class="detail-label">Cab</div><div class="detail-value good">Crew Cab ✓</div></div>
+    <div class="detail"><div class="detail-label">Mileage</div><div class="detail-value warn">TBD — call dealer</div></div>
+    <div class="detail"><div class="detail-label">Location</div><div class="detail-value">Foley, Alabama</div></div>
+    <div class="detail"><div class="detail-label">VIN</div><div class="detail-value">1GCEK19B05E225880</div></div>
+  </div>
+  <div class="truck-notes"><strong>Clean CARFAX.</strong> Black, spray-in bedliner, tow package, HD rear locking diff, off-road suspension, skid plates, chrome wheels. Franchised dealer (Sandy Sansing CDJR).</div>
+  <div class="allin">Est. all-in: <span>~$8,925</span> (truck + $1,500 transport + $500 reg)</div>
+  <div class="truck-links">
+    <a class="truck-link" href="https://www.cdjroffoley.com/inventory/used-2005-chevrolet-silverado-1500-z71-4wd-4d-crew-cab-1gcek19b05e225880/" target="_blank">Dealer Listing →</a>
+  </div>
+</div>
+
+<div class="truck-card priority-a tier1" data-tier="tier1" data-priority="priority-a" id="gm4">
+  <div class="truck-header">
+    <div class="truck-title">GM-4: 2006 Silverado 1500 LS Crew Cab — San Antonio, TX</div>
+    <div class="truck-price">$8,000</div>
+  </div>
+  <div class="truck-tags">
+    <span class="tag tag-tier1">GM Golden Era</span>
+    <span class="tag tag-unverified">Needs Verification</span>
+    <span class="tag tag-sunbelt">Sun Belt</span>
+  </div>
+  <div class="truck-details">
+    <div class="detail"><div class="detail-label">Engine</div><div class="detail-value warn">Likely 5.3L — VERIFY</div></div>
+    <div class="detail"><div class="detail-label">Drivetrain</div><div class="detail-value warn">VERIFY 4x4</div></div>
+    <div class="detail"><div class="detail-label">Cab</div><div class="detail-value good">Crew Cab ✓</div></div>
+    <div class="detail"><div class="detail-label">Mileage</div><div class="detail-value good">123,000 ⭐</div></div>
+    <div class="detail"><div class="detail-label">Location</div><div class="detail-value">San Antonio, TX</div></div>
+    <div class="detail"><div class="detail-label">VIN</div><div class="detail-value warn">Unknown</div></div>
+  </div>
+  <div class="truck-notes"><strong>Best mileage GM lead.</strong> 123K on a 2006 from Texas = excellent candidate IF it's 4x4 with the 5.3L. Facebook Marketplace — private party, negotiable.</div>
+  <div class="allin">Est. all-in: <span>~$10,700</span> (negotiated $8K + $1,200 transport + $500 reg)</div>
+</div>
+
+<div class="truck-card priority-a tier1" data-tier="tier1" data-priority="priority-a" id="gm2">
+  <div class="truck-header">
+    <div class="truck-title">GM-2: 2005 Silverado 1500 Z71 Crew Cab 4WD — Loveland, CO</div>
+    <div class="truck-price">$7,990</div>
+  </div>
+  <div class="truck-tags">
+    <span class="tag tag-tier1">GM Golden Era</span>
+    <span class="tag tag-verified">VIN Confirmed</span>
+    <span class="tag tag-checking">Verifying...</span>
+  </div>
+  <div class="truck-details">
+    <div class="detail"><div class="detail-label">Engine</div><div class="detail-value good">5.3L V8 ✓</div></div>
+    <div class="detail"><div class="detail-label">Drivetrain</div><div class="detail-value good">4WD ✓</div></div>
+    <div class="detail"><div class="detail-label">Cab</div><div class="detail-value good">Crew Cab ✓</div></div>
+    <div class="detail"><div class="detail-label">Mileage</div><div class="detail-value warn">TBD — call dealer</div></div>
+    <div class="detail"><div class="detail-label">Location</div><div class="detail-value">Loveland, Colorado</div></div>
+    <div class="detail"><div class="detail-label">VIN</div><div class="detail-value">2GCEK13T351165774</div></div>
+  </div>
+  <div class="truck-notes">Gray exterior. Franchised dealer (Crossroads Hyundai). Colorado = generally dry but check undercarriage for mountain salt.</div>
+  <div class="allin">Est. all-in: <span>~$9,690</span> (truck + $1,200 transport + $500 reg)</div>
+  <div class="truck-links">
+    <a class="truck-link" href="https://www.mycrossroadshyundai.com/inventory/used-2005-chevrolet-silverado-1500-z71-4wd-crew-cab-2gcek13t351165774/" target="_blank">Dealer Listing →</a>
+  </div>
+</div>
+
+<div class="truck-card priority-b tier1" data-tier="tier1" data-priority="priority-b" id="gm3">
+  <div class="truck-header">
+    <div class="truck-title">GM-3: 2006 Silverado 1500 LS 4x4 — Austin, TX</div>
+    <div class="truck-price">$9,400</div>
+  </div>
+  <div class="truck-tags">
+    <span class="tag tag-tier1">GM Golden Era</span>
+    <span class="tag tag-unverified">Verify Crew Cab</span>
+    <span class="tag tag-sunbelt">Sun Belt</span>
+  </div>
+  <div class="truck-details">
+    <div class="detail"><div class="detail-label">Engine</div><div class="detail-value good">5.3L V8 ✓</div></div>
+    <div class="detail"><div class="detail-label">Drivetrain</div><div class="detail-value good">4x4 ✓</div></div>
+    <div class="detail"><div class="detail-label">Mileage</div><div class="detail-value">185,000</div></div>
+    <div class="detail"><div class="detail-label">Location</div><div class="detail-value">Austin, TX</div></div>
+  </div>
+  <div class="truck-notes">Higher mileage but TX truck = no rust. FB Marketplace, private party. Negotiate down from $9,400.</div>
+</div>
+
+<div class="truck-card priority-b tier1" data-tier="tier1" data-priority="priority-b" id="gm7">
+  <div class="truck-header">
+    <div class="truck-title">GM-7: 2004 Silverado 1500 Crew Cab — Phoenix, AZ</div>
+    <div class="truck-price">$6,200</div>
+  </div>
+  <div class="truck-tags">
+    <span class="tag tag-tier1">GM Golden Era</span>
+    <span class="tag tag-unverified">Needs Full Verification</span>
+    <span class="tag tag-sunbelt">Sun Belt ⭐</span>
+  </div>
+  <div class="truck-details">
+    <div class="detail"><div class="detail-label">Engine</div><div class="detail-value warn">VERIFY</div></div>
+    <div class="detail"><div class="detail-label">Drivetrain</div><div class="detail-value warn">VERIFY 4x4</div></div>
+    <div class="detail"><div class="detail-label">Mileage</div><div class="detail-value">220,000</div></div>
+    <div class="detail"><div class="detail-label">Location</div><div class="detail-value good">Phoenix, AZ (local!)</div></div>
+  </div>
+  <div class="truck-notes">Phoenix truck = zero rust guaranteed. Over 200K miles. Very low price. <strong>LOCAL — could inspect in person.</strong> Must confirm 4x4 and 5.3L.</div>
+</div>
+
+<div class="truck-card priority-c tier1" data-tier="tier1" data-priority="priority-c" id="gm5">
+  <div class="truck-header">
+    <div class="truck-title">GM-5: 2005 Silverado Z71 Crew 4WD — Garner, NC</div>
+    <div class="truck-price">TBD</div>
+  </div>
+  <div class="truck-tags">
+    <span class="tag tag-tier1">GM Golden Era</span>
+    <span class="tag tag-verified">Specs Confirmed</span>
+  </div>
+  <div class="truck-details">
+    <div class="detail"><div class="detail-label">Engine</div><div class="detail-value good">5.3L V8 ✓</div></div>
+    <div class="detail"><div class="detail-label">Drivetrain</div><div class="detail-value good">4WD ✓</div></div>
+    <div class="detail"><div class="detail-label">Mileage</div><div class="detail-value bad">202,953</div></div>
+    <div class="detail"><div class="detail-label">Location</div><div class="detail-value">Garner, NC</div></div>
+  </div>
+  <div class="truck-notes">Over 200K miles. Serviced + NC inspected. Backup option — price should be aggressive given mileage.</div>
+  <div class="truck-links"><a class="truck-link" href="https://nc-motorsports.com/2719_V20230206100008/Garner/2005-Chevrolet-Silverado-1500-Z71-Crew-Cab-4WD-for-sale" target="_blank">Listing →</a></div>
+</div>
+
+<div class="truck-card priority-c tier1" data-tier="tier1" data-priority="priority-c" id="gm6">
+  <div class="truck-header">
+    <div class="truck-title">GM-6: 2006 Silverado Crew 4x4 — Cars & Bids Auction</div>
+    <div class="truck-price">Auction</div>
+  </div>
+  <div class="truck-tags">
+    <span class="tag tag-tier1">GM Golden Era</span>
+    <span class="tag tag-unverified">Modified</span>
+  </div>
+  <div class="truck-details">
+    <div class="detail"><div class="detail-label">Engine</div><div class="detail-value warn">LS3 Swap (not stock)</div></div>
+    <div class="detail"><div class="detail-label">Drivetrain</div><div class="detail-value good">4x4 ✓</div></div>
+    <div class="detail"><div class="detail-label">Location</div><div class="detail-value">Warm climate (TBD)</div></div>
+  </div>
+  <div class="truck-notes">1-owner, Sport Red Metallic. LS3 crate engine = 430hp. Modified — not stock 5.3L. Auction ends ~Apr 1. May exceed budget.</div>
+  <div class="truck-links"><a class="truck-link" href="https://carsandbids.com/auctions/92RD2yV4/2006-chevrolet-silverado-1500-crew-cab-4x4" target="_blank">Auction →</a></div>
+</div>
+
+<!-- TIER 2: TOYOTA TUNDRA -->
+<div class="section-label">Tier 2 — Toyota Tundra CrewMax SR5 5.7L 4x4</div>
+
+<div class="truck-card priority-a tier2" data-tier="tier2" data-priority="priority-a" id="tun1">
+  <div class="truck-header">
+    <div class="truck-title">TUN-1: 2007 Tundra SR5 CrewMax 4WD — Greeley, CO</div>
+    <div class="truck-price">~$11-13K</div>
+  </div>
+  <div class="truck-tags">
+    <span class="tag tag-tier2">Toyota Tundra</span>
+    <span class="tag tag-verified">VIN Confirmed</span>
+    <span class="tag tag-checking">Verifying...</span>
+  </div>
+  <div class="truck-details">
+    <div class="detail"><div class="detail-label">Engine</div><div class="detail-value good">5.7L V8 ✓</div></div>
+    <div class="detail"><div class="detail-label">Drivetrain</div><div class="detail-value good">4WD ✓</div></div>
+    <div class="detail"><div class="detail-label">Cab</div><div class="detail-value good">CrewMax ✓</div></div>
+    <div class="detail"><div class="detail-label">Trim</div><div class="detail-value good">SR5 ✓ (no nav)</div></div>
+    <div class="detail"><div class="detail-label">Mileage</div><div class="detail-value good">69,113 ⭐⭐</div></div>
+    <div class="detail"><div class="detail-label">VIN</div><div class="detail-value">5TBDV54157S457065</div></div>
+  </div>
+  <div class="truck-notes"><strong>Exceptional find.</strong> 69K miles on a 2007 Tundra. VIN decodes to CrewMax 4WD V8 SR5. Silver. If still available, this is a top-tier candidate.</div>
+  <div class="allin">Est. all-in: <span>~$13,700</span> (truck + $1,200 transport + $500 reg)</div>
+  <div class="truck-links"><a class="truck-link" href="https://www.drivenmotion.com/used-cars/2007-toyota-tundra-crewmax-sr5-pickup-4d-5-1-2-ft-5TBDV54157S457065" target="_blank">Listing →</a></div>
+</div>
+
+<div class="truck-card priority-b tier2" data-tier="tier2" data-priority="priority-b" id="tun2">
+  <div class="truck-header">
+    <div class="truck-title">TUN-2: 2010 Tundra "Grade" CrewMax — Albuquerque, NM</div>
+    <div class="truck-price">~$12-15K</div>
+  </div>
+  <div class="truck-tags">
+    <span class="tag tag-tier2">Toyota Tundra</span>
+    <span class="tag tag-unverified">Verify 4WD</span>
+    <span class="tag tag-sunbelt">Sun Belt</span>
+  </div>
+  <div class="truck-details">
+    <div class="detail"><div class="detail-label">Engine</div><div class="detail-value good">5.7L V8 ✓</div></div>
+    <div class="detail"><div class="detail-label">Drivetrain</div><div class="detail-value warn">VERIFY 4WD</div></div>
+    <div class="detail"><div class="detail-label">Trim</div><div class="detail-value good">Grade (no nav) ✓</div></div>
+    <div class="detail"><div class="detail-label">Mileage</div><div class="detail-value">143,424</div></div>
+    <div class="detail"><div class="detail-label">Location</div><div class="detail-value">Albuquerque, NM</div></div>
+  </div>
+  <div class="truck-notes">"Grade" is the base trim — even simpler than SR5, no nav system. Under 150K miles. NM = no rust.</div>
+</div>
+
+<div class="truck-card priority-b tier2" data-tier="tier2" data-priority="priority-b" id="tun5">
+  <div class="truck-header">
+    <div class="truck-title">TUN-5: 2009 Tundra SR5 CrewMax — Rancho Cucamonga, CA</div>
+    <div class="truck-price">TBD</div>
+  </div>
+  <div class="truck-tags">
+    <span class="tag tag-tier2">Toyota Tundra</span>
+    <span class="tag tag-unverified">Needs Full Verification</span>
+    <span class="tag tag-sunbelt">Sun Belt</span>
+  </div>
+  <div class="truck-details">
+    <div class="detail"><div class="detail-label">Drivetrain</div><div class="detail-value warn">VERIFY 4WD</div></div>
+    <div class="detail"><div class="detail-label">Location</div><div class="detail-value">Rancho Cucamonga, CA</div></div>
+  </div>
+  <div class="truck-notes">Custom bumpers, level kit, bed cover. Drives well, no leaks. FB Marketplace — verify everything.</div>
+</div>
+
+<div class="truck-card priority-b tier2" data-tier="tier2" data-priority="priority-b" id="tun6">
+  <div class="truck-header">
+    <div class="truck-title">TUN-6: 2009 Tundra SR5 CrewMax — Porter, TX</div>
+    <div class="truck-price">TBD</div>
+  </div>
+  <div class="truck-tags">
+    <span class="tag tag-tier2">Toyota Tundra</span>
+    <span class="tag tag-unverified">Needs Full Verification</span>
+    <span class="tag tag-sunbelt">Sun Belt</span>
+  </div>
+  <div class="truck-details">
+    <div class="detail"><div class="detail-label">Location</div><div class="detail-value">Porter, TX</div></div>
+  </div>
+  <div class="truck-notes">Texas. FB Marketplace — needs full detail verification.</div>
+</div>
+
+<div class="truck-card priority-b tier2" data-tier="tier2" data-priority="priority-b" id="tun3">
+  <div class="truck-header">
+    <div class="truck-title">TUN-3: 2011 Tundra "Grade" CrewMax 4WD — Rapid City, SD</div>
+    <div class="truck-price">~$15-17K</div>
+  </div>
+  <div class="truck-tags">
+    <span class="tag tag-tier2">Toyota Tundra</span>
+    <span class="tag tag-verified">Specs Confirmed</span>
+    <span class="tag tag-unverified">Over Budget?</span>
+  </div>
+  <div class="truck-details">
+    <div class="detail"><div class="detail-label">Engine</div><div class="detail-value good">5.7L V8 FFV ✓</div></div>
+    <div class="detail"><div class="detail-label">Drivetrain</div><div class="detail-value good">4WD ✓</div></div>
+    <div class="detail"><div class="detail-label">Mileage</div><div class="detail-value good">112,275</div></div>
+    <div class="detail"><div class="detail-label">Location</div><div class="detail-value">Rapid City, SD</div></div>
+  </div>
+  <div class="truck-notes">Low mileage but may exceed $15K budget. Not sun belt.</div>
+</div>
+
+<!-- TIER 3: FORD COYOTE -->
+<div class="section-label">Tier 3 — Ford F-150 SuperCrew 5.0L Coyote 4x4</div>
+
+<div class="truck-card priority-a tier3" data-tier="tier3" data-priority="priority-a" id="ford1">
+  <div class="truck-header">
+    <div class="truck-title">FORD-1: 2012 F-150 FX4 SuperCrew 4WD — Cleveland, TN</div>
+    <div class="truck-price">~$12-13K</div>
+  </div>
+  <div class="truck-tags">
+    <span class="tag tag-tier3">Ford Coyote</span>
+    <span class="tag tag-verified">Engine Confirmed</span>
+    <span class="tag tag-sunbelt">Sun Belt</span>
+    <span class="tag tag-checking">Verifying...</span>
+  </div>
+  <div class="truck-details">
+    <div class="detail"><div class="detail-label">Engine</div><div class="detail-value good">5.0L V8 Coyote ✓</div></div>
+    <div class="detail"><div class="detail-label">Drivetrain</div><div class="detail-value good">4WD ✓</div></div>
+    <div class="detail"><div class="detail-label">Cab</div><div class="detail-value good">SuperCrew ✓</div></div>
+    <div class="detail"><div class="detail-label">Mileage</div><div class="detail-value good">116,139</div></div>
+    <div class="detail"><div class="detail-label">Location</div><div class="detail-value">Cleveland, TN</div></div>
+    <div class="detail"><div class="detail-label">Color</div><div class="detail-value">Ingot Silver / Black</div></div>
+  </div>
+  <div class="truck-notes"><strong>"Great Deal" on CarGurus.</strong> FX4 = skid plates, e-locking rear diff, off-road shocks. Under 120K miles. Tennessee = sun belt.</div>
+  <div class="allin">Est. all-in: <span>~$14,400</span> (truck + $1,400 transport + $500 reg)</div>
+</div>
+
+<div class="truck-card priority-b tier3" data-tier="tier3" data-priority="priority-b" id="ford7">
+  <div class="truck-header">
+    <div class="truck-title">FORD-7: 2012 F-150 FX4 SuperCrew 4x4 — Austin, TX</div>
+    <div class="truck-price">$7,900</div>
+  </div>
+  <div class="truck-tags">
+    <span class="tag tag-tier3">Ford Coyote</span>
+    <span class="tag tag-unverified">VERIFY ENGINE</span>
+    <span class="tag tag-sunbelt">Sun Belt</span>
+  </div>
+  <div class="truck-details">
+    <div class="detail"><div class="detail-label">Engine</div><div class="detail-value warn">MUST VERIFY 5.0L (could be EcoBoost)</div></div>
+    <div class="detail"><div class="detail-label">Mileage</div><div class="detail-value">158,000</div></div>
+    <div class="detail"><div class="detail-label">Location</div><div class="detail-value">Austin, TX</div></div>
+  </div>
+  <div class="truck-notes"><strong>Low price = red flag.</strong> Must verify engine is 5.0L Coyote, not 3.5L EcoBoost. Check title status. FB Marketplace.</div>
+</div>
+
+<div class="truck-card priority-b tier3" data-tier="tier3" data-priority="priority-b" id="ford2">
+  <div class="truck-header">
+    <div class="truck-title">FORD-2: 2014 F-150 STX SuperCrew 4WD — Florence, NJ</div>
+    <div class="truck-price">~$12-14K</div>
+  </div>
+  <div class="truck-tags">
+    <span class="tag tag-tier3">Ford Coyote</span>
+    <span class="tag tag-verified">Engine Confirmed</span>
+  </div>
+  <div class="truck-details">
+    <div class="detail"><div class="detail-label">Engine</div><div class="detail-value good">5.0L V8 Coyote ✓</div></div>
+    <div class="detail"><div class="detail-label">Mileage</div><div class="detail-value good">135,680</div></div>
+    <div class="detail"><div class="detail-label">Location</div><div class="detail-value">Florence, NJ</div></div>
+  </div>
+  <div class="truck-notes">2014 = last year before aluminum body. Under 150K. Not sun belt but northeast.</div>
+</div>
+
+<div class="truck-card priority-b tier3" data-tier="tier3" data-priority="priority-b" id="ford3">
+  <div class="truck-header">
+    <div class="truck-title">FORD-3: 2012 F-150 FX4 SuperCrew 4WD — Gainesville, GA</div>
+    <div class="truck-price">~$11-13K</div>
+  </div>
+  <div class="truck-tags">
+    <span class="tag tag-tier3">Ford Coyote</span>
+    <span class="tag tag-verified">Engine Confirmed</span>
+    <span class="tag tag-sunbelt">Sun Belt</span>
+  </div>
+  <div class="truck-details">
+    <div class="detail"><div class="detail-label">Engine</div><div class="detail-value good">5.0L V8 Coyote ✓</div></div>
+    <div class="detail"><div class="detail-label">Mileage</div><div class="detail-value">168,532</div></div>
+    <div class="detail"><div class="detail-label">Location</div><div class="detail-value">Gainesville, GA</div></div>
+  </div>
+</div>
+
+<div class="truck-card priority-b tier3" data-tier="tier3" data-priority="priority-b" id="ford4">
+  <div class="truck-header">
+    <div class="truck-title">FORD-4: 2013 F-150 FX4 SuperCrew 4WD — Moncks Corner, SC</div>
+    <div class="truck-price">~$11-13K</div>
+  </div>
+  <div class="truck-tags">
+    <span class="tag tag-tier3">Ford Coyote</span>
+    <span class="tag tag-verified">Engine Confirmed</span>
+    <span class="tag tag-sunbelt">Sun Belt</span>
+  </div>
+  <div class="truck-details">
+    <div class="detail"><div class="detail-label">Engine</div><div class="detail-value good">5.0L V8 Coyote ✓</div></div>
+    <div class="detail"><div class="detail-label">Mileage</div><div class="detail-value">180,405</div></div>
+    <div class="detail"><div class="detail-label">Location</div><div class="detail-value">Moncks Corner, SC</div></div>
+  </div>
+</div>
+
+<div class="truck-card priority-c tier3" data-tier="tier3" data-priority="priority-c" id="ford5">
+  <div class="truck-header">
+    <div class="truck-title">FORD-5: 2013 F-150 FX4 SuperCrew 4WD — Dawsonville, GA</div>
+    <div class="truck-price">~$14-15K</div>
+  </div>
+  <div class="truck-tags">
+    <span class="tag tag-tier3">Ford Coyote</span>
+    <span class="tag tag-verified">Engine Confirmed</span>
+    <span class="tag tag-sunbelt">Sun Belt</span>
+  </div>
+  <div class="truck-details">
+    <div class="detail"><div class="detail-label">Engine</div><div class="detail-value good">5.0L V8 Coyote ✓</div></div>
+    <div class="detail"><div class="detail-label">Mileage</div><div class="detail-value">185,963</div></div>
+    <div class="detail"><div class="detail-label">Location</div><div class="detail-value">Dawsonville, GA</div></div>
+    <div class="detail"><div class="detail-label">Phone</div><div class="detail-value">(706) 764-4889</div></div>
+  </div>
+  <div class="truck-notes">Leather interior. "Fair Deal" = slightly high. Higher mileage.</div>
+</div>
+
+<div class="truck-card priority-c tier3" data-tier="tier3" data-priority="priority-c" id="ford6">
+  <div class="truck-header">
+    <div class="truck-title">FORD-6: 2012 F-150 FX4 SuperCrew 4WD — Centennial, CO</div>
+    <div class="truck-price">~$11-13K</div>
+  </div>
+  <div class="truck-tags">
+    <span class="tag tag-tier3">Ford Coyote</span>
+    <span class="tag tag-verified">Engine Confirmed</span>
+  </div>
+  <div class="truck-details">
+    <div class="detail"><div class="detail-label">Engine</div><div class="detail-value good">5.0L V8 Coyote ✓</div></div>
+    <div class="detail"><div class="detail-label">Mileage</div><div class="detail-value">177,878</div></div>
+    <div class="detail"><div class="detail-label">Location</div><div class="detail-value">Centennial, CO</div></div>
+  </div>
+</div>
+
+</div>
+
+<footer class="footer">Golden Era Truck Search &bull; $15K Budget &bull; 912 Westwood Ranch</footer>
+
+<script>
+function filterTrucks(filter) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  document.querySelectorAll('.truck-card').forEach(card => {
+    if (filter === 'all') { card.style.display = ''; return; }
+    const tier = card.dataset.tier;
+    const priority = card.dataset.priority;
+    card.style.display = (tier === filter || priority === filter) ? '' : 'none';
+  });
+  // Show/hide section labels
+  document.querySelectorAll('.section-label').forEach(label => {
+    if (filter === 'all') { label.style.display = ''; return; }
+    const text = label.textContent.toLowerCase();
+    if (filter === 'priority-a') { label.style.display = ''; return; }
+    label.style.display = text.includes(filter.replace('tier','').replace('1','gm').replace('2','toyota').replace('3','ford')) ? '' : 'none';
+  });
+}
+</script>
+</body>
+</html>
