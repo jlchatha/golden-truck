@@ -197,17 +197,17 @@ tr:hover td{background:var(--surface)}
       <div class="card-row"><span class="card-label">Rick&rsquo;s Verdict</span><span class="card-val good">&ldquo;The Toyota is a winner.&rdquo;</span></div>
     </div>
 
-    <div class="card pending">
-      <div class="card-status">&#9203;</div>
+    <div class="card eliminated">
+      <div class="card-status">&#10060;</div>
       <h3>Julian &mdash; 2006 GMC Sierra 1500</h3>
       <div class="subtitle">Crew Cab SLE 4x4 &bull; 5.3L V8 (no AFM) &bull; 226K mi</div>
       <div class="card-row"><span class="card-label">Seller</span><span class="card-val">Julian, Phoenix AZ</span></div>
       <div class="card-row"><span class="card-label">Asking</span><span class="card-val">$6,000 OBO</span></div>
       <div class="card-row"><span class="card-label">Power</span><span class="card-val">295 hp / 335 lb-ft</span></div>
-      <div class="card-row"><span class="card-label">Trans</span><span class="card-val">4L60E</span></div>
+      <div class="card-row"><span class="card-label">Trans</span><span class="card-val bad">4L60E &mdash; flagged sluggish/delayed</span></div>
       <div class="card-row"><span class="card-label">Tow</span><span class="card-val">7,500 lbs</span></div>
-      <div class="card-row"><span class="card-label">PPI Result</span><span class="card-val warn">PENDING</span></div>
-      <div class="card-row"><span class="card-label">Golden Era</span><span class="card-val good">Tier 1 &mdash; exact spec match</span></div>
+      <div class="card-row"><span class="card-label">PPI Result</span><span class="card-val bad">FAILED &mdash; 7 concerns</span></div>
+      <div class="card-row"><span class="card-label">Key Issues</span><span class="card-val bad">Trans failing, control arms, oil pan leak</span></div>
     </div>
 
     <div class="card eliminated">
@@ -249,10 +249,16 @@ tr:hover td{background:var(--surface)}
       <div class="tl-text">9 concerns. Hydroboost leaking (brake assist), valve cover gaskets leaking, control arm bushings cracked, ball joints shot, front axle boots torn, A/C weak. $1,700-4,050 in repairs on top of purchase. The &ldquo;rebuild&rdquo; didn&rsquo;t touch the chassis.</div>
       <div class="tl-quote">Rick said it&rsquo;s a solid truck that just needs attention &mdash; the big tires didn&rsquo;t do it any favors and it rides rough.</div>
     </div>
-    <div class="tl-event pending">
-      <div class="tl-time">Next</div>
-      <div class="tl-title">Julian (Sierra) &mdash; Pending</div>
-      <div class="tl-text">Rick headed to Julian after Beto. The golden era spec match at half the price. If it passes, it&rsquo;s the hardest decision. If it fails, Brue wins outright.</div>
+    <div class="tl-event fail">
+      <div class="tl-time">10:33 PM &mdash; RO#10253</div>
+      <div class="tl-title">Julian (Sierra) &mdash; ELIMINATED</div>
+      <div class="tl-text">7 concerns. The 4L60E transmission flagged sluggish with delayed shifting &mdash; exactly the failure mode we asked Rick to check. Control arm bushings dry rotted (same as Beto). Oil pan leaking. EVAP large leak. A/C weak. $2,300-4,300 in repairs.</div>
+      <div class="tl-quote">The golden era dream at $5K &mdash; but Rick found the trans is on borrowed time. Can&rsquo;t build a property truck on a transmission that&rsquo;s already slipping.</div>
+    </div>
+    <div class="tl-event milestone">
+      <div class="tl-time">Decision</div>
+      <div class="tl-title">Brue wins. Call Kyle.</div>
+      <div class="tl-text">The only truck that passed clean. 8.35 vs 6.95 vs 6.55. Not even close. $11,500 to a fair seller for a proven truck.</div>
     </div>
   </div>
 </section>
@@ -268,19 +274,19 @@ tr:hover td{background:var(--surface)}
       <tr><th>Factor</th><th>Weight</th><th>Brue</th><th>Julian</th><th>Beto</th></tr>
     </thead>
     <tbody>
-      <tr><td>PPI result</td><td>25%</td><td class="score-high">10 &#9989;</td><td class="score-tbd">?</td><td class="score-low">4 &#10060;</td></tr>
+      <tr><td>PPI result</td><td>25%</td><td class="score-high">10 &#9989;</td><td class="score-low">5 &#10060;</td><td class="score-low">4 &#10060;</td></tr>
       <tr><td>Powertrain reliability</td><td>20%</td><td class="score-high">10</td><td class="score-mid">8</td><td class="score-mid">9</td></tr>
-      <tr><td>Price / value</td><td>20%</td><td class="score-low">5</td><td class="score-high">10</td><td class="score-low">5</td></tr>
+      <tr><td>Price / value</td><td>20%</td><td class="score-low">5</td><td class="score-mid">6</td><td class="score-low">5</td></tr>
       <tr><td>Towing capability</td><td>10%</td><td class="score-high">10</td><td class="score-mid">7</td><td class="score-high">10</td></tr>
       <tr><td>912 utility fit</td><td>10%</td><td class="score-mid">9</td><td class="score-mid">8</td><td class="score-mid">9</td></tr>
       <tr><td>Maintenance simplicity</td><td>10%</td><td class="score-mid">6</td><td class="score-high">10</td><td class="score-mid">9</td></tr>
       <tr><td>Seller trustworthiness</td><td>5%</td><td class="score-high">10</td><td class="score-mid">7</td><td class="score-low">5</td></tr>
-      <tr style="font-weight:700;border-top:2px solid var(--amber)"><td>Weighted Score</td><td>100%</td><td class="score-high">8.35</td><td class="score-tbd">?</td><td class="score-low">6.55</td></tr>
+      <tr style="font-weight:700;border-top:2px solid var(--amber)"><td>Weighted Score</td><td>100%</td><td class="score-high">8.35</td><td class="score-low">6.95</td><td class="score-low">6.55</td></tr>
     </tbody>
   </table>
 
-  <div class="callout callout-amber">
-    If Julian gets a clean PPI (score 10), he lands at <strong>8.70</strong> &mdash; beating Brue. If Julian scores 8 or below, Brue wins. The PPI result is the entire ballgame.
+  <div class="callout callout-green">
+    <strong>Brue wins decisively.</strong> 8.35 vs 6.95 vs 6.55. The only truck that passed clean. Both GM candidates had rotted control arms and significant mechanical issues &mdash; Julian&rsquo;s 4L60E trans showing early failure, Beto&rsquo;s hydroboost leaking. Rick&rsquo;s PPIs validated exactly what the matrix was designed to surface.
   </div>
 </section>
 
@@ -290,7 +296,7 @@ tr:hover td{background:var(--surface)}
   <div class="s-title">What each truck uniquely brings</div>
 
   <div class="strength"><div class="strength-name green">Brue (Tundra) &mdash; Reliability</div><div class="strength-text">Toyota&rsquo;s flagship V8. 6-speed auto that won&rsquo;t need a rebuild. Fully boxed frame. Clean PPI with only brakes. New radiator. Seller cited KBB unprompted. Finding a Tundra in this shape with a straightforward seller &mdash; that doesn&rsquo;t happen twice.</div></div>
-  <div class="strength"><div class="strength-name amber">Julian (Sierra) &mdash; Value</div><div class="strength-text">The golden era spec at half the price. 5.3L Vortec, no AFM, iron block, crew cab, 4WD. $5,250 buys a running truck. Saves $7,300 over 5 years vs Brue. The cheapest parts in America. The question is whether the PPI backs it up.</div></div>
+  <div class="strength"><div class="strength-name red">Julian (Sierra) &mdash; Value (Eliminated)</div><div class="strength-text">The golden era spec at half the price. 5.3L Vortec, no AFM, iron block, crew cab, 4WD. Would have saved $7,300 over 5 years. But Rick found the 4L60E trans sluggish with delayed shifts &mdash; a $1,500-2,000 rebuild waiting to happen. Control arms rotted. Oil pan leaking. The math only works if the truck is sound, and this one isn&rsquo;t.</div></div>
   <div class="strength"><div class="strength-name red">Beto (2500HD) &mdash; Capability (Eliminated)</div><div class="strength-text">3/4 ton, 2,000 lb payload, 4L80E (indestructible trans), fully boxed HD frame. Could haul gravel, lumber, and the Cedarshed. But 268K miles of suspension wear, hydroboost leak, and $1,700-4,050 in repairs killed the value proposition.</div></div>
 </section>
 
@@ -357,10 +363,10 @@ tr:hover td{background:var(--surface)}
       <div class="subtitle">RO#10252 &bull; 9 findings</div>
       <a href="https://shop.tekmetric.com/inspection/rhQsK8WetwlEOfpbxzoZNga12qcqWPLgu5xrPc8pdPs" target="_blank" style="display:inline-block;margin-top:12px;padding:10px 24px;background:var(--red);color:var(--white);text-decoration:none;border-radius:4px;font-family:var(--font-display);font-size:13px;font-weight:700">View Full Report &rarr;</a>
     </div>
-    <div class="card pending" style="text-align:center">
+    <div class="card eliminated" style="text-align:center">
       <h3>Julian &mdash; Sierra</h3>
-      <div class="subtitle">Pending</div>
-      <div style="margin-top:12px;padding:10px 24px;border:1px solid var(--amber);border-radius:4px;font-family:var(--font-display);font-size:13px;font-weight:700;color:var(--amber)">Awaiting Report</div>
+      <div class="subtitle">RO#10253 &bull; 7 findings</div>
+      <a href="https://shop.tekmetric.com/inspection/p57cQCvo5MDOafxDKr0xD6RrZoBNlgQ2eWoRxEttWY8" target="_blank" style="display:inline-block;margin-top:12px;padding:10px 24px;background:var(--red);color:var(--white);text-decoration:none;border-radius:4px;font-family:var(--font-display);font-size:13px;font-weight:700">View Full Report &rarr;</a>
     </div>
   </div>
 </section>
@@ -370,9 +376,10 @@ tr:hover td{background:var(--surface)}
   <div class="s-label">The Call</div>
   <div class="s-title">Decision framework</div>
 
-  <div class="decision-box">
-    <div class="big">Brue leads at 8.35</div>
-    <div class="sub">Julian can only win with a clean PPI (8.70). Beto is out. If Julian fails &mdash; Brue it is.</div>
+  <div class="decision-box" style="border-color:var(--green)">
+    <div class="big" style="color:var(--green)">Brue wins. 8.35 to 6.95 to 6.55.</div>
+    <div class="sub">The only truck that passed PPI clean. Both GM candidates had rotted front ends and significant mechanical issues. Kyle asked a fair price, Rick validated the truck, and the Tundra earned it.</div>
+    <div style="margin-top:16px;font-family:var(--font-display);font-size:14px;color:var(--amber)">April 7, 2026 &mdash; Closed on the land. Bought the truck. Same day.</div>
   </div>
 
   <div style="text-align:center;margin-top:24px">
