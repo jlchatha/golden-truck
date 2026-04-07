@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PPI Day | Golden Era Truck Search</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0c0a08; --surface: #161310; --surface2: #1e1a15; --border: #2a2420;
+  --text: #f5f2ef; --text-dim: #d4cec6; --text-muted: #9a948e;
+  --amber: #f59e0b; --amber-bright: #fbbf24; --amber-dim: #f59e0b20;
+  --green: #22c55e; --green-dim: #22c55e20;
+  --blue: #3b82f6; --blue-dim: #3b82f620;
+  --cyan: #22d3ee; --cyan-dim: #22d3ee20;
+  --red: #ef4444; --red-dim: #ef444420;
+  --white: #ffffff;
+  --font-display: 'Syne', sans-serif; --font-body: 'Source Sans 3', sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--font-body);background:var(--bg);color:var(--text);font-size:15px;line-height:1.7;overflow-x:hidden}
+body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 50% 0%,#f59e0b06 0%,transparent 60%);pointer-events:none;z-index:0}
+.container{max-width:960px;margin:0 auto;padding:0 20px;position:relative;z-index:1}
+
+/* GATE */
+#gate{position:fixed;inset:0;z-index:9999;background:#0c0a08;display:flex;align-items:center;justify-content:center;transition:opacity 0.6s}
+#gate.unlocked{opacity:0;visibility:hidden;pointer-events:none}
+
+.hero{padding:60px 0 40px;text-align:center;border-bottom:1px solid var(--border)}
+.hero-badge{display:inline-block;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--amber);border:1px solid var(--amber);padding:4px 16px;border-radius:20px;margin-bottom:16px;font-family:var(--font-display)}
+.hero h1{font-family:var(--font-display);font-size:clamp(28px,6vw,48px);font-weight:800;color:var(--white);line-height:1.1;margin-bottom:8px;letter-spacing:-1px}
+.hero h1 span{color:var(--amber)}
+.hero p{font-size:16px;color:var(--text-dim);max-width:600px;margin:0 auto;font-weight:300}
+.hero .date{font-size:12px;color:var(--text-muted);margin-top:12px;letter-spacing:2px}
+
+.section{padding:48px 0;border-bottom:1px solid var(--border)}
+.s-label{font-family:var(--font-display);font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--amber);margin-bottom:6px;font-weight:600}
+.s-title{font-family:var(--font-display);font-size:clamp(22px,4vw,32px);font-weight:700;color:var(--white);margin-bottom:12px;letter-spacing:-0.5px}
+.s-desc{font-size:15px;color:var(--text-dim);max-width:600px;margin-bottom:24px;font-weight:300}
+
+/* TIMELINE */
+.timeline{position:relative;padding-left:32px}
+.timeline::before{content:'';position:absolute;left:10px;top:0;bottom:0;width:2px;background:var(--border)}
+.tl-event{position:relative;margin-bottom:28px}
+.tl-event::before{content:'';position:absolute;left:-26px;top:6px;width:12px;height:12px;border-radius:50%;border:2px solid var(--amber);background:var(--bg)}
+.tl-event.pass::before{background:var(--green);border-color:var(--green)}
+.tl-event.fail::before{background:var(--red);border-color:var(--red)}
+.tl-event.pending::before{background:var(--amber);border-color:var(--amber)}
+.tl-event.milestone::before{background:var(--amber);border-color:var(--amber);width:16px;height:16px;left:-28px;top:4px}
+.tl-time{font-size:12px;color:var(--amber);font-family:var(--font-display);font-weight:600;letter-spacing:1px}
+.tl-title{font-family:var(--font-display);font-size:16px;font-weight:700;color:var(--white);margin:2px 0}
+.tl-text{font-size:14px;color:var(--text-dim)}
+.tl-quote{font-style:italic;color:var(--green);margin-top:4px;font-size:14px}
+
+/* CARDS */
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin:24px 0}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:20px;position:relative}
+.card.winner{border-color:var(--green);box-shadow:0 0 20px #22c55e15}
+.card.eliminated{border-color:var(--red);opacity:0.6}
+.card.pending{border-color:var(--amber)}
+.card-status{position:absolute;top:12px;right:12px;font-size:20px}
+.card h3{font-family:var(--font-display);font-size:17px;font-weight:700;color:var(--white);margin-bottom:4px}
+.card .subtitle{font-size:12px;color:var(--text-muted);margin-bottom:12px}
+.card-row{display:flex;justify-content:space-between;font-size:13px;padding:4px 0;border-bottom:1px solid #1a1610}
+.card-row:last-child{border-bottom:none}
+.card-label{color:var(--text-muted)}
+.card-val{color:var(--white);font-weight:500}
+.card-val.good{color:var(--green)}.card-val.warn{color:var(--amber)}.card-val.bad{color:var(--red)}
+
+/* MATRIX TABLE */
+table{width:100%;border-collapse:collapse;margin:20px 0;font-size:14px}
+th{text-align:left;font-family:var(--font-display);font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);padding:8px 10px;border-bottom:1px solid var(--border);font-weight:600}
+td{padding:8px 10px;border-bottom:1px solid #1a1610;color:var(--text)}
+tr:hover td{background:var(--surface)}
+.score-high{color:var(--green);font-weight:700}
+.score-mid{color:var(--amber);font-weight:600}
+.score-low{color:var(--red);font-weight:600}
+.score-tbd{color:var(--text-muted);font-style:italic}
+
+/* TCO */
+.tco-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:24px 0}
+.tco-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:20px;text-align:center}
+.tco-card.best{border-color:var(--green)}
+.tco-card.worst{border-color:var(--red);opacity:0.6}
+.tco-name{font-family:var(--font-display);font-size:14px;font-weight:700;color:var(--white);margin-bottom:4px}
+.tco-amount{font-family:var(--font-display);font-size:28px;font-weight:800}
+.tco-amount.green{color:var(--green)}.tco-amount.amber{color:var(--amber)}.tco-amount.red{color:var(--red)}
+.tco-sub{font-size:12px;color:var(--text-muted);margin-top:2px}
+
+/* STRENGTHS */
+.strength{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;margin:8px 0}
+.strength-name{font-family:var(--font-display);font-size:14px;font-weight:700;margin-bottom:4px}
+.strength-name.green{color:var(--green)}.strength-name.amber{color:var(--amber)}.strength-name.red{color:var(--red)}
+.strength-text{font-size:13px;color:var(--text-dim)}
+
+/* DECISION */
+.decision-box{background:linear-gradient(135deg,var(--surface),var(--surface2));border:2px solid var(--amber);border-radius:12px;padding:32px;text-align:center;margin:32px 0}
+.decision-box .big{font-family:var(--font-display);font-size:clamp(20px,4vw,36px);font-weight:800;color:var(--amber-bright);margin-bottom:8px}
+.decision-box .sub{font-size:15px;color:var(--text-dim)}
+
+.callout{padding:14px 18px;border-radius:8px;font-size:14px;margin:16px 0;border:1px solid}
+.callout-green{background:var(--green-dim);border-color:#22c55e33}
+.callout-amber{background:var(--amber-dim);border-color:#f59e0b33}
+.callout-red{background:var(--red-dim);border-color:#ef444433}
+
+.footer{text-align:center;padding:40px 0;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--text-muted)}
+.back-link{display:inline-block;color:var(--amber);text-decoration:none;font-size:13px;margin-top:12px}
+.back-link:hover{text-decoration:underline}
+
+@media(max-width:600px){
+  .hero{padding:40px 0 24px}
+  .tco-grid{grid-template-columns:1fr}
+  .card-grid{grid-template-columns:1fr}
+  table{font-size:12px}
+  th,td{padding:6px 6px}
+}
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <div style="text-align:center;padding:40px">
+    <div style="font-family:var(--font-display);font-size:20px;font-weight:300;color:#e8dcc8;letter-spacing:3px;text-transform:uppercase;margin-bottom:24px">Golden Era Truck Search</div>
+    <input type="password" id="gateInput" placeholder="Passphrase" autocomplete="off" style="padding:12px 20px;background:transparent;border:1px solid #ffffff18;border-radius:2px;color:#e8dcc8;font-size:14px;letter-spacing:3px;text-align:center;outline:none;width:100%;max-width:300px">
+    <div id="gateError" style="font-size:12px;color:#b5653a;opacity:0;transition:opacity 0.3s;margin-top:8px">Incorrect</div>
+  </div>
+</div>
+
+<div id="content" style="opacity:0;transition:opacity 0.6s">
+<div class="container">
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">PPI Day</div>
+  <h1>Three trucks. <span>One day.</span></h1>
+  <p>Rick Hukle inspected all three candidates in a single day. The same day we closed on 912 Westwood Ranch. This is how it played out.</p>
+  <div class="date">April 7, 2026 &mdash; Mesa &amp; Glendale, AZ</div>
+</section>
+
+<!-- THE THREE CANDIDATES -->
+<section class="section">
+  <div class="s-label">The Candidates</div>
+  <div class="s-title">Three trucks walked in</div>
+  <div class="s-desc">Narrowed from 34 leads over two weeks. Each survived Howard&rsquo;s phone screen. Each got a full PPI from Rick at Royal Eagle Automotive.</div>
+
+  <div class="card-grid">
+    <div class="card winner">
+      <div class="card-status">&#9989;</div>
+      <h3>Brue &mdash; 2008 Toyota Tundra</h3>
+      <div class="subtitle">CrewMax SR5 4x4 &bull; 5.7L V8 &bull; 237K mi</div>
+      <div class="card-row"><span class="card-label">Seller</span><span class="card-val">Kyle, Glendale AZ</span></div>
+      <div class="card-row"><span class="card-label">Asking</span><span class="card-val">$11,500</span></div>
+      <div class="card-row"><span class="card-label">Power</span><span class="card-val">381 hp / 401 lb-ft</span></div>
+      <div class="card-row"><span class="card-label">Trans</span><span class="card-val">6-speed auto (AB60F)</span></div>
+      <div class="card-row"><span class="card-label">Tow</span><span class="card-val">10,400 lbs</span></div>
+      <div class="card-row"><span class="card-label">PPI Result</span><span class="card-val good">PASSED &mdash; 5 minor findings</span></div>
+      <div class="card-row"><span class="card-label">Rick&rsquo;s Verdict</span><span class="card-val good">&ldquo;The Toyota is a winner.&rdquo;</span></div>
+    </div>
+
+    <div class="card pending">
+      <div class="card-status">&#9203;</div>
+      <h3>Julian &mdash; 2006 GMC Sierra 1500</h3>
+      <div class="subtitle">Crew Cab SLE 4x4 &bull; 5.3L V8 (no AFM) &bull; 226K mi</div>
+      <div class="card-row"><span class="card-label">Seller</span><span class="card-val">Julian, Phoenix AZ</span></div>
+      <div class="card-row"><span class="card-label">Asking</span><span class="card-val">$6,000 OBO</span></div>
+      <div class="card-row"><span class="card-label">Power</span><span class="card-val">295 hp / 335 lb-ft</span></div>
+      <div class="card-row"><span class="card-label">Trans</span><span class="card-val">4L60E</span></div>
+      <div class="card-row"><span class="card-label">Tow</span><span class="card-val">7,500 lbs</span></div>
+      <div class="card-row"><span class="card-label">PPI Result</span><span class="card-val warn">PENDING</span></div>
+      <div class="card-row"><span class="card-label">Golden Era</span><span class="card-val good">Tier 1 &mdash; exact spec match</span></div>
+    </div>
+
+    <div class="card eliminated">
+      <div class="card-status">&#10060;</div>
+      <h3>Beto &mdash; 2004 Silverado 2500HD</h3>
+      <div class="subtitle">Crew Cab 4x4 &bull; 6.0L V8 LQ4 &bull; 268K mi</div>
+      <div class="card-row"><span class="card-label">Seller</span><span class="card-val">Beto, Phoenix AZ</span></div>
+      <div class="card-row"><span class="card-label">Asking</span><span class="card-val">$8,000</span></div>
+      <div class="card-row"><span class="card-label">Power</span><span class="card-val">300 hp / 360 lb-ft</span></div>
+      <div class="card-row"><span class="card-label">Trans</span><span class="card-val">4L80E</span></div>
+      <div class="card-row"><span class="card-label">Tow</span><span class="card-val">~10,000 lbs</span></div>
+      <div class="card-row"><span class="card-label">PPI Result</span><span class="card-val bad">FAILED &mdash; 9 concerns</span></div>
+      <div class="card-row"><span class="card-label">Key Issues</span><span class="card-val bad">Hydroboost, front end, axle boots</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- TIMELINE -->
+<section class="section">
+  <div class="s-label">The Day</div>
+  <div class="s-title">How it unfolded</div>
+  <div class="s-desc">Property closing, three PPIs, and a truck decision &mdash; all on April 7, 2026.</div>
+
+  <div class="timeline">
+    <div class="tl-event milestone">
+      <div class="tl-time">Morning</div>
+      <div class="tl-title">912 Westwood Ranch &mdash; Closed</div>
+      <div class="tl-text">40.22 acres in Ash Fork, AZ. $50,000. The land is ours.</div>
+    </div>
+    <div class="tl-event pass">
+      <div class="tl-time">8:40 PM &mdash; RO#10251</div>
+      <div class="tl-title">Brue (Tundra) &mdash; PASSED</div>
+      <div class="tl-text">5 minor findings. Brakes needed (pulsating rotors), TPMS light, paint fade. Everything else clean. Brand new radiator just installed.</div>
+      <div class="tl-quote">&ldquo;The Toyota is a winner. I literally couldn&rsquo;t find anything wrong besides needing brake pads and rotors all around. No leaks and it drives good.&rdquo; &mdash; Rick</div>
+    </div>
+    <div class="tl-event fail">
+      <div class="tl-time">9:30 PM &mdash; RO#10252</div>
+      <div class="tl-title">Beto (2500HD) &mdash; ELIMINATED</div>
+      <div class="tl-text">9 concerns. Hydroboost leaking (brake assist), valve cover gaskets leaking, control arm bushings cracked, ball joints shot, front axle boots torn, A/C weak. $1,700-4,050 in repairs on top of purchase. The &ldquo;rebuild&rdquo; didn&rsquo;t touch the chassis.</div>
+      <div class="tl-quote">Rick said it&rsquo;s a solid truck that just needs attention &mdash; the big tires didn&rsquo;t do it any favors and it rides rough.</div>
+    </div>
+    <div class="tl-event pending">
+      <div class="tl-time">Next</div>
+      <div class="tl-title">Julian (Sierra) &mdash; Pending</div>
+      <div class="tl-text">Rick headed to Julian after Beto. The golden era spec match at half the price. If it passes, it&rsquo;s the hardest decision. If it fails, Brue wins outright.</div>
+    </div>
+  </div>
+</section>
+
+<!-- DECISION MATRIX -->
+<section class="section">
+  <div class="s-label">The Math</div>
+  <div class="s-title">Weighted decision matrix</div>
+  <div class="s-desc">Every factor scored 1-10, weighted by importance. PPI result weighted highest &mdash; a clean report from Rick beats everything.</div>
+
+  <table>
+    <thead>
+      <tr><th>Factor</th><th>Weight</th><th>Brue</th><th>Julian</th><th>Beto</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>PPI result</td><td>25%</td><td class="score-high">10 &#9989;</td><td class="score-tbd">?</td><td class="score-low">4 &#10060;</td></tr>
+      <tr><td>Powertrain reliability</td><td>20%</td><td class="score-high">10</td><td class="score-mid">8</td><td class="score-mid">9</td></tr>
+      <tr><td>Price / value</td><td>20%</td><td class="score-low">5</td><td class="score-high">10</td><td class="score-low">5</td></tr>
+      <tr><td>Towing capability</td><td>10%</td><td class="score-high">10</td><td class="score-mid">7</td><td class="score-high">10</td></tr>
+      <tr><td>912 utility fit</td><td>10%</td><td class="score-mid">9</td><td class="score-mid">8</td><td class="score-mid">9</td></tr>
+      <tr><td>Maintenance simplicity</td><td>10%</td><td class="score-mid">6</td><td class="score-high">10</td><td class="score-mid">9</td></tr>
+      <tr><td>Seller trustworthiness</td><td>5%</td><td class="score-high">10</td><td class="score-mid">7</td><td class="score-low">5</td></tr>
+      <tr style="font-weight:700;border-top:2px solid var(--amber)"><td>Weighted Score</td><td>100%</td><td class="score-high">8.35</td><td class="score-tbd">?</td><td class="score-low">6.55</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-amber">
+    If Julian gets a clean PPI (score 10), he lands at <strong>8.70</strong> &mdash; beating Brue. If Julian scores 8 or below, Brue wins. The PPI result is the entire ballgame.
+  </div>
+</section>
+
+<!-- STRENGTHS -->
+<section class="section">
+  <div class="s-label">Beyond the Numbers</div>
+  <div class="s-title">What each truck uniquely brings</div>
+
+  <div class="strength"><div class="strength-name green">Brue (Tundra) &mdash; Reliability</div><div class="strength-text">Toyota&rsquo;s flagship V8. 6-speed auto that won&rsquo;t need a rebuild. Fully boxed frame. Clean PPI with only brakes. New radiator. Seller cited KBB unprompted. Finding a Tundra in this shape with a straightforward seller &mdash; that doesn&rsquo;t happen twice.</div></div>
+  <div class="strength"><div class="strength-name amber">Julian (Sierra) &mdash; Value</div><div class="strength-text">The golden era spec at half the price. 5.3L Vortec, no AFM, iron block, crew cab, 4WD. $5,250 buys a running truck. Saves $7,300 over 5 years vs Brue. The cheapest parts in America. The question is whether the PPI backs it up.</div></div>
+  <div class="strength"><div class="strength-name red">Beto (2500HD) &mdash; Capability (Eliminated)</div><div class="strength-text">3/4 ton, 2,000 lb payload, 4L80E (indestructible trans), fully boxed HD frame. Could haul gravel, lumber, and the Cedarshed. But 268K miles of suspension wear, hydroboost leak, and $1,700-4,050 in repairs killed the value proposition.</div></div>
+</section>
+
+<!-- 5 YEAR TCO -->
+<section class="section">
+  <div class="s-label">Long Game</div>
+  <div class="s-title">5-year total cost of ownership</div>
+  <div class="s-desc">Purchase + maintenance + brakes + tires + fuel + insurance + registration + failure reserves + trans rebuild risk. Net of estimated resale.</div>
+
+  <div class="tco-grid">
+    <div class="tco-card">
+      <div class="tco-name">Brue (Tundra)</div>
+      <div class="tco-amount amber">$30.5K</div>
+      <div class="tco-sub">Net after ~$6K resale</div>
+    </div>
+    <div class="tco-card best">
+      <div class="tco-name">Julian (Sierra)</div>
+      <div class="tco-amount green">$26.3K</div>
+      <div class="tco-sub">Net after ~$2K resale &bull; Cheapest</div>
+    </div>
+    <div class="tco-card worst">
+      <div class="tco-name">Beto (2500HD)</div>
+      <div class="tco-amount red">$31.8K</div>
+      <div class="tco-sub">Net after ~$2.7K resale &bull; Eliminated</div>
+    </div>
+  </div>
+
+  <div class="callout callout-green">
+    Julian saves ~$4,200 net over Brue across 5 years. But Brue holds resale value dramatically better &mdash; Tundras are the only truck in this class that appreciates. The true gap narrows to ~$4K when you factor in what you can sell it for.
+  </div>
+</section>
+
+<!-- OFFERS -->
+<section class="section">
+  <div class="s-label">The Money</div>
+  <div class="s-title">Offers &amp; all-in cost</div>
+
+  <table>
+    <thead><tr><th></th><th>Brue</th><th>Julian</th><th>Beto</th></tr></thead>
+    <tbody>
+      <tr><td>Asking</td><td>$11,500</td><td>$6,000 OBO</td><td style="color:var(--red)">$8,000</td></tr>
+      <tr><td><strong>Offer</strong></td><td><strong>$11,000-11,500</strong></td><td><strong>$5,000-5,500</strong></td><td style="color:var(--text-muted)">N/A</td></tr>
+      <tr><td>Day 1 maintenance</td><td>$400-600</td><td>TBD</td><td style="color:var(--text-muted)">$1,700-4,050</td></tr>
+      <tr style="font-weight:700"><td>All-in to rolling</td><td style="color:var(--amber)">$11,400-12,100</td><td style="color:var(--green)">$5,000-7,000</td><td style="color:var(--red)">$8,200-11,050</td></tr>
+      <tr><td>Delta vs Brue</td><td>&mdash;</td><td style="color:var(--green)">Saves $4,400-7,100</td><td style="color:var(--red)">Eliminated</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- PPI REPORTS -->
+<section class="section">
+  <div class="s-label">The Evidence</div>
+  <div class="s-title">Rick&rsquo;s Tekmetric reports</div>
+  <div class="s-desc">Full inspection reports from Royal Eagle Automotive Solutions. Rick Hukle, Service Advisor. Every component checked.</div>
+
+  <div class="card-grid">
+    <div class="card winner" style="text-align:center">
+      <h3>Brue &mdash; Tundra</h3>
+      <div class="subtitle">RO#10251 &bull; 5 findings</div>
+      <a href="https://shop.tekmetric.com/inspection/JOwESWnjBGfo_LHdTuMBXqmt1eF0b2eK_w9hPrKUu3w" target="_blank" style="display:inline-block;margin-top:12px;padding:10px 24px;background:var(--green);color:var(--bg);text-decoration:none;border-radius:4px;font-family:var(--font-display);font-size:13px;font-weight:700">View Full Report &rarr;</a>
+    </div>
+    <div class="card eliminated" style="text-align:center">
+      <h3>Beto &mdash; 2500HD</h3>
+      <div class="subtitle">RO#10252 &bull; 9 findings</div>
+      <a href="https://shop.tekmetric.com/inspection/rhQsK8WetwlEOfpbxzoZNga12qcqWPLgu5xrPc8pdPs" target="_blank" style="display:inline-block;margin-top:12px;padding:10px 24px;background:var(--red);color:var(--white);text-decoration:none;border-radius:4px;font-family:var(--font-display);font-size:13px;font-weight:700">View Full Report &rarr;</a>
+    </div>
+    <div class="card pending" style="text-align:center">
+      <h3>Julian &mdash; Sierra</h3>
+      <div class="subtitle">Pending</div>
+      <div style="margin-top:12px;padding:10px 24px;border:1px solid var(--amber);border-radius:4px;font-family:var(--font-display);font-size:13px;font-weight:700;color:var(--amber)">Awaiting Report</div>
+    </div>
+  </div>
+</section>
+
+<!-- DECISION -->
+<section class="section" style="border-bottom:none">
+  <div class="s-label">The Call</div>
+  <div class="s-title">Decision framework</div>
+
+  <div class="decision-box">
+    <div class="big">Brue leads at 8.35</div>
+    <div class="sub">Julian can only win with a clean PPI (8.70). Beto is out. If Julian fails &mdash; Brue it is.</div>
+  </div>
+
+  <div style="text-align:center;margin-top:24px">
+    <a class="back-link" href="index.html">&larr; Back to Search Tracker (34 leads)</a>
+  </div>
+</section>
+
+</div>
+<footer class="footer">Golden Era Truck Search &bull; PPI Day &bull; April 7, 2026 &bull; Trinity Framework</footer>
+</div>
+
+<script>
+(function(){
+  var P='serendipity',K='wr912_auth';
+  if(sessionStorage.getItem(K)==='true')unlock();
+  document.getElementById('gateInput').addEventListener('keydown',function(e){
+    if(e.key==='Enter'){
+      if(this.value.toLowerCase().trim()===P){sessionStorage.setItem(K,'true');unlock()}
+      else{document.getElementById('gateError').style.opacity='1';this.value='';setTimeout(function(){document.getElementById('gateError').style.opacity='0'},2000)}
+    }
+  });
+  document.getElementById('gateInput').focus();
+  function unlock(){
+    var g=document.getElementById('gate');g.classList.add('unlocked');
+    document.getElementById('content').style.opacity='1';
+  }
+})();
+</script>
+</body>
+</html>
